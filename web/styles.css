@@ -1,9 +1,9 @@
 :root{
-  --bg:#0f1724;
+  --bg:#fefdfd;
   --muted:#94a3b8;
-  --card:#ffffff;
-  --accent1:#6c5ce7; /* purple */
-  --accent2:#00b4d8; /* cyan */
+  --card:#050505;
+  --accent1:#2441fb; /* purple */
+  --accent2:#036a31; /* cyan */
   --glass: rgba(255,255,255,0.06);
   --radius:14px;
   --maxw:1100px;
@@ -48,10 +48,10 @@ body{
   gap:12px;
   align-items:center;
   text-decoration:none;
-  color:#071126;
+  color:#000104;
 }
 .brand-logo{
-  height:40px;
+  height:50px;
   width:auto;
   display:block;
   object-fit:contain;
@@ -73,22 +73,76 @@ body{
 /* mobile nav toggle */
 .nav-toggle{display:none;background:none;border:0;font-size:20px;padding:6px}
 
-/* HERO */
-.hero{
-  min-height:320px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  position:relative;
-  background: linear-gradient(135deg,var(--accent1), var(--accent2));
-  color:white;
-  padding:48px 20px;
-  overflow:hidden;
+/* HERO SECTION */
+.hero {
+  width: 100vw; /* Full width across screen */
+  min-height: 340px;
+  margin: 0;
+  padding: 60px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(135deg, var(--accent1), var(--accent2));
+  color: white;
+  overflow: hidden;
+  animation: fadeInUp 1.2s ease both; /* Keep fade-in animation */
 }
+
+/* Container for logo + tagline */
+.hero-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Flow Roots logo styling */
+.hero-logo {
+  max-width: 1000px;   /* controls logo size */
+  width: 50%;
+  height: auto;
+  margin-bottom: 0px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+
+/* Tagline */
+.hero-sub {
+  font-size: 1.15rem;
+  font-weight: 500;
+  margin-bottom: 18px;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* Buttons */
+.hero-cta .btn {
+  margin: 0 6px;
+}
+
+/* Fade-in animation keyframes */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .hero {
+    padding: 40px 16px;
+  }
+  .hero-logo {
+    max-width: 300px;
+  }
+  .hero-sub {
+    font-size: 1rem;
+  }
+}
+
 .hero-inner{max-width:980px}
-.hero-title{font-family:var(--ff-display);font-size:2.6rem;margin:0 0 6px}
-.hero-sub{opacity:0.95;margin:0 0 18px}
+.hero-sub{opacity:0.95;
+          margin:0 0 18px
+        }
 .lead{color:#24303c}
 
 /* CTA buttons */
@@ -170,4 +224,20 @@ body{
   .team-grid{grid-template-columns:1fr}
   .hero{padding:36px 16px}
   .hero-title{font-size:1.9rem}
+}
+
+.countdown {
+  margin-top: 8px;
+  font-weight: 600;
+  color: var(--accent1);
+  background: linear-gradient(90deg, var(--accent1), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
 }

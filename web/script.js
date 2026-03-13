@@ -42,3 +42,47 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
   });
 });
+
+// Fetch events from Flask API and display with countdown
+async function loadEvents() {
+  try {
+    const response = await fetch('/api/events');
+    const events = await response.json();
+
+    const container = document.getElementById('events-list');
+    container.innerHTML = '';
+
+    events.forEach(evt => {
+      const card = document.createElement('article');
+      card.className = 'card';
+
+      // Calculate time left
+      const eventDate = new Date(evt.date);
+      const now = new Date();
+      const diffTime = eventDate - now;
+      let countdownText = '';
+
+      if (diffTime > 0) {
+        const days = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        countdownText = `${days} day${days !== 1 ? 's' : ''} left`;
+      } else {
+        countdownText = 'Event has passed';
+      }
+
+      card.innerHTML = `
+        <h3>${evt.title}</h3>
+        <p><strong>Date:</strong> ${evt.date}</p>
+        <p><strong>Location:</strong> ${evt.location}</p>
+        <p><strong>Instructor:</strong> ${evt.instructor}</p>
+        <p class="countdown">${countdownText}</p>
+      `;
+
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error('Error loading events:', err);
+  }
+}
+
+// Load events when page loads
+document.addEventListener('DOMContentLoaded', loadEvents);

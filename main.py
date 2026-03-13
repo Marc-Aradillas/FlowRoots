@@ -1,6 +1,8 @@
+import os
 from modules import learn, discover, contribute
 from chatbot import bot
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, jsonify
+import json
 
 # Create Flask app and set folders
 app = Flask(__name__, static_folder='web', template_folder='web')
@@ -13,6 +15,19 @@ def home():
 @app.route('/<path:filename>')
 def static_files(filename):
     return send_from_directory(app.static_folder, filename)
+
+# Fetch events dynamically
+@app.route('/api/events')
+def get_events():
+    data_path = os.path.join('data', 'events.json')
+    with open(data_path, 'r') as f:
+        events = json.load(f)
+    return jsonify(events)
+
+# Fetch assets dynamically
+@app.route('/assets/<path:filename>')
+def assets(filename):
+    return send_from_directory('assets', filename)
 
 
 # --- CLI Menu Logic ---
