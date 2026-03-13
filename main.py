@@ -19,10 +19,16 @@ def static_files(filename):
 # Fetch events dynamically
 @app.route('/api/events')
 def get_events():
-    data_path = os.path.join('data', 'events.json')
-    with open(data_path, 'r') as f:
-        events = json.load(f)
-    return jsonify(events)
+    # This finds the folder where main.py lives, then looks for data/events.json
+    base_path = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(base_path, 'data', 'events.json')
+    
+    try:
+        with open(data_path, 'r') as f:
+            events = json.load(f)
+        return jsonify(events)
+    except FileNotFoundError:
+        return jsonify({"error": "Events file not found"}), 404
 
 # Fetch assets dynamically
 @app.route('/assets/<path:filename>')

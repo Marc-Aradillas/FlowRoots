@@ -1,15 +1,17 @@
 :root{
-  --bg:#fefdfd;
+  --bg:#0a0a0a; /* Updated for Dark Theme */
   --muted:#94a3b8;
-  --card:#050505;
-  --accent1:#2441fb; /* purple */
-  --accent2:#036a31; /* cyan */
+  --card:#161616; /* Darker card background */
+  --text:#f8fafc; /* Near-white text */
+  --accent1:#2441fb; 
+  --accent2:#036a31; 
   --glass: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.1); /* Subtle border for dark mode */
   --radius:14px;
   --maxw:1100px;
   --spacing:18px;
-  --ff-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  --ff-display: "Poppins", sans-serif;
+  --ff-sans: "Inter", sans-serif;
+  --ff-display: "Syne", sans-serif;
 }
 
 *{box-sizing:border-box}
@@ -17,8 +19,8 @@ html,body{height:100%}
 body{
   margin:0;
   font-family:var(--ff-sans);
-  color:#071126;
-  background:linear-gradient(180deg,#f8fafc 0%, #ffffff 100%);
+  color:var(--text); /* Use the new light text color */
+  background:#0a0a0a; /* Solid dark background */
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
   line-height:1.5;
@@ -30,9 +32,9 @@ body{
   position:sticky;
   top:0;
   z-index:40;
-  backdrop-filter: blur(6px);
-  background: linear-gradient(90deg, rgba(255,255,255,0.85), rgba(255,255,255,0.75));
-  border-bottom:1px solid rgba(11,22,40,0.04);
+  backdrop-filter: blur(8px);
+  background: rgba(10, 10, 10, 0.8); /* Dark glass header */
+  border-bottom: 1px solid var(--border);
 }
 .header-inner{
   max-width:var(--maxw);
@@ -48,7 +50,7 @@ body{
   gap:12px;
   align-items:center;
   text-decoration:none;
-  color:#000104;
+  color:var(--text);
 }
 .brand-logo{
   height:50px;
@@ -66,19 +68,19 @@ body{
 /* nav */
 .main-nav{display:flex;gap:14px}
 .main-nav a{
-  color:#374151;text-decoration:none;font-weight:600;padding:8px 10px;border-radius:8px;
+  color:#cbd5e1;text-decoration:none;font-weight:600;padding:8px 10px;border-radius:8px;
 }
-.main-nav a:hover{background:var(--glass);color:#0b1228}
+.main-nav a:hover{background:var(--glass);color:white}
 
 /* mobile nav toggle */
-.nav-toggle{display:none;background:none;border:0;font-size:20px;padding:6px}
+.nav-toggle{display:none;background:none;border:0;font-size:20px;padding:6px; color:white;}
 
-/* HERO SECTION */
+/* HERO SECTION - UNCHANGED PER REQUEST */
 .hero {
-  width: 100vw; /* Full width across screen */
-  min-height: 340px;
+  width: 100vw; 
+  min-height: 400px;
   margin: 0;
-  padding: 60px 20px;
+  padding: 20px 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -87,46 +89,71 @@ body{
   background: linear-gradient(135deg, var(--accent1), var(--accent2));
   color: white;
   overflow: hidden;
-  animation: fadeInUp 1.2s ease both; /* Keep fade-in animation */
+  animation: fadeInUp 1.2s ease both;
+  margin-bottom: 0;
 }
 
-/* Container for logo + tagline */
 .hero-inner {
-  display: flex;
+  display: 100%;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-/* Flow Roots logo styling */
 .hero-logo {
-  max-width: 1000px;   /* controls logo size */
-  width: 50%;
+  max-width: none;   
+  width: 45%;
   height: auto;
-  margin-bottom: 0px;
+  margin-top: -20px; /* Pulls the logo up higher toward the header */
+  margin-bottom: -10px; /* Pulls the tagline up closer to the logo */
   filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
 
-/* Tagline */
 .hero-sub {
   font-size: 1.15rem;
   font-weight: 500;
-  margin-bottom: 18px;
+  margin-top: 0; /* Ensures no extra gap above the tagline */
+  margin-bottom: 12px; /* Tightens space before the buttons */
   color: rgba(255, 255, 255, 0.95);
 }
 
-/* Buttons */
 .hero-cta .btn {
   margin: 0 6px;
 }
 
-/* Fade-in animation keyframes */
+/* Container to handle centering and section spacing */
+.widget-container {
+  width: 100%;
+  max-width: var(--maxw); /* Aligns with your 1100px site width */
+  margin: 0 auto;
+  padding: 40px 20px; /* Space between gradient hero and content */
+  display: flex;
+  justify-content: center;
+}
+
+/* The dark-themed frame for the widget */
+.instagram-wrapper {
+  width: 100%;
+  max-width: 1000px; /* Increased width for a better visual fit */
+  background: var(--card); /* Matches your #050505 or #161616 card color */
+  padding: 0px;
+  border-radius: var(--radius);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.lightwidget-widget {
+  width: 100% !important;
+  border: 0 !important;
+  display: block;
+}
+
+
 @keyframes fadeInUp {
   0% { opacity: 0; transform: translateY(20px); }
   100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Responsive adjustments */
 @media (max-width: 640px) {
   .hero {
     padding: 40px 16px;
@@ -140,10 +167,10 @@ body{
 }
 
 .hero-inner{max-width:980px}
-.hero-sub{opacity:0.95;
-          margin:0 0 18px
-        }
-.lead{color:#24303c}
+.hero-sub{opacity:0.95; margin:0 0 18px}
+
+/* Lead text under About Us */
+.lead{color:#cbd5e1}
 
 /* CTA buttons */
 .btn{
@@ -156,7 +183,7 @@ body{
 
 /* containers/sections */
 .container{max-width:var(--maxw);margin:0 auto;padding:36px 20px}
-.section-title{font-family:var(--ff-display);font-size:1.25rem;margin:0 0 12px}
+.section-title{font-family:var(--ff-display);font-size:1.25rem;margin:0 0 12px; color: var(--text);}
 .section{background:transparent;border-radius:12px;margin-bottom:18px}
 
 /* cards grid */
@@ -166,14 +193,14 @@ body{
   gap:14px;margin-top:12px;
 }
 .card{
-  background:linear-gradient(180deg, #fff, #fbfdff);
-  border-radius:12px;padding:16px;border:1px solid rgba(11,22,40,0.04);
-  box-shadow:0 8px 18px rgba(16,24,40,0.04);
+  background: var(--card); /* Dark card background */
+  border-radius:12px;padding:16px;border:1px solid var(--border);
+  box-shadow:0 8px 18px rgba(0,0,0,0.4);
   transition:transform .22s ease, box-shadow .22s ease;
 }
-.card h3{margin:0 0 6px;font-size:1rem}
+.card h3{margin:0 0 6px;font-size:1rem; color: white;}
 .card p{margin:0;font-size:0.92rem;color:var(--muted)}
-.card:hover{transform:translateY(-8px);box-shadow:0 22px 46px rgba(16,24,40,0.08)}
+.card:hover{transform:translateY(-8px);box-shadow:0 10px 25px rgba(36, 65, 251, 0.2); border-color: var(--accent1);}
 
 /* team */
 .team-grid{
@@ -183,7 +210,8 @@ body{
 }
 .team-card{
   display:flex;gap:12px;align-items:flex-start;
-  background:#fff;border-radius:12px;padding:12px;border:1px solid rgba(11,22,40,0.04);
+  background: var(--card); /* Dark team card */
+  border-radius:12px;padding:12px;border:1px solid var(--border);
   transition:transform .22s ease;
 }
 .team-card .avatar{
@@ -191,22 +219,23 @@ body{
   box-shadow: inset 0 -8px 18px rgba(0,0,0,0.08);
   flex-shrink:0;
 }
-.team-card h4{margin:0 0 6px}
+.team-card h4{margin:0 0 6px; color: white;}
 .team-card p{margin:0;color:var(--muted)}
-.team-card:hover{transform:translateY(-6px)}
+.team-card:hover{transform:translateY(-6px); border-color: var(--accent2);}
 
 /* contact row */
 .contact-row{display:flex;gap:10px;margin-top:12px}
 .social-link{
-  padding:8px 12px;border-radius:10px;text-decoration:none;border:1px solid rgba(11,22,40,0.06);
-  background:#fff;color:#071126;font-weight:600;
+  padding:8px 12px;border-radius:10px;text-decoration:none;border:1px solid var(--border);
+  background: var(--card); color:white; font-weight:600;
 }
+.social-link:hover { background: var(--glass); }
 
 /* footer */
-.site-footer{padding:22px 0;background:transparent;border-top:1px solid rgba(11,22,40,0.03)}
+.site-footer{padding:22px 0;background:transparent;border-top:1px solid var(--border)}
 .site-footer p{margin:0;color:var(--muted);text-align:center}
 
-/* reveal animation (JS toggles .revealed) */
+/* reveal animation */
 .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease, transform .6s ease}
 .revealed{opacity:1;transform:none}
 
@@ -222,8 +251,6 @@ body{
   .nav-toggle{display:block}
   .cards-grid{grid-template-columns:1fr}
   .team-grid{grid-template-columns:1fr}
-  .hero{padding:36px 16px}
-  .hero-title{font-size:1.9rem}
 }
 
 .countdown {
@@ -240,4 +267,16 @@ body{
   0% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.7; transform: scale(1.05); }
   100% { opacity: 1; transform: scale(1); }
+}
+
+/* Force widget modal text to be white/readable */
+#lightwidget_modal .lw-caption, 
+#lightwidget_modal .lw-username,
+#lightwidget_modal .lw-stats {
+  color: #ffffff !important;
+}
+
+/* Ensure the modal background matches your dark theme */
+#lightwidget_modal .lw-modal-content {
+  background-color: #0a0a0a !important;
 }
