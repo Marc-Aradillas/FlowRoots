@@ -1,10 +1,11 @@
 import os
+from dotenv import load_dotenv
 from google import genai
 # import anthropic  # Re-enable when ready to fund API
 # import openai     # Re-enable when ready to fund API
 
-# Initialize Gemini Client
-gemini_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+# Load environment variables
+load_dotenv()
 
 # Future API Clients (ready for activation):
 # claude_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
@@ -19,17 +20,23 @@ FLOWROOTS_CONTEXT = (
 
 async def query_llm(provider: str, prompt: str) -> str:
     """Routes prompts to the designated AI model."""
+    api_key = os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return "Error: GEMINI_API_KEY is not set in your .env file."
+
+    # Initialize Gemini client dynamically
+    gemini_client = genai.Client(api_key=api_key)
     full_prompt = f"{FLOWROOTS_CONTEXT}\n\nUser Request: {prompt}"
 
     try:
-        if provider == "gemini-fast":
+        if provider in ["gemini-fast", "gemini", "ask"]:
             response = gemini_client.models.generate_content(
                 model="gemini-2.5-flash",
                 contents=full_prompt
             )
             return response.text
 
-        elif provider == "gemini-pro":
+        elif provider in ["gemini-pro", "draft", "pro"]:
             response = gemini_client.models.generate_content(
                 model="gemini-2.5-pro",
                 contents=full_prompt
@@ -57,7 +64,7 @@ async def query_llm(provider: str, prompt: str) -> str:
         #     return response.choices[0].message.content
 
         else:
-            return "Unknown model provider requested."
+            return f"Unknown model provider requested: {provider}"
 
     except Exception as e:
         return f"Error executing {provider} query: {str(e)}"
