@@ -16,7 +16,6 @@ def chunk_message(text: str, max_length: int = 1900):
     """Splits long responses into chunks under Discord's 2000 char limit."""
     chunks = []
     while len(text) > max_length:
-        # Find the last newline or space before the limit to break cleanly
         split_idx = text.rfind('\n', 0, max_length)
         if split_idx == -1:
             split_idx = text.rfind(' ', 0, max_length)
@@ -31,7 +30,7 @@ def chunk_message(text: str, max_length: int = 1900):
 
 @client.event
 async def on_ready():
-    print(f'⚡ FlowBot active with non-blocking LLM routing as {client.user}!')
+    print(f'⚡ FlowBot active as {client.user}!')
 
 @client.event
 async def on_message(message):
@@ -39,13 +38,12 @@ async def on_message(message):
         return
 
     # Help Command
-    if message.content.strip() == '!help' or message.content.strip() == '!flowbot':
+    if message.content.strip() in ['!help', '!flowbot']:
         help_text = (
-            "**🌊 FlowBot Multi-LLM Commands:**\n"
-            "`!gemini <prompt>` - Query Gemini 2.5 Flash (Docs, context, fast tasks)\n"
-            "`!claude <prompt>` - Query Claude 3.5 Sonnet (Proposals, pitches, copy)\n"
-            "`!gpt <prompt>` - Query GPT-4o (Structured data, code, logic)\n"
-            "`!ping` - Check bot status"
+            "**🌊 FlowBot Commands:**\n"
+            "`!ask <prompt>` or `!gemini <prompt>` - Fast operational queries (Gemini 2.5 Flash)\n"
+            "`!draft <prompt>` or `!pro <prompt>` - Detailed proposals & copy (Gemini 2.5 Pro)\n"
+            "`!ping` - Check bot connection"
         )
         await message.channel.send(help_text)
         return
@@ -54,27 +52,29 @@ async def on_message(message):
         await message.channel.send('FlowBot is live and connected! 🌊')
         return
 
-    # Process Model Requests
+    # Determine Provider Route
     provider = None
     prompt = ""
 
-    if message.content.startswith('!gemini '):
-        provider = 'gemini'
-        prompt = message.content[8:]
-    elif message.content.startswith('!claude '):
-        provider = 'claude'
-        prompt = message.content[8:]
-    elif message.content.startswith('!gpt '):
-        provider = 'openai'
-        prompt = message.content[5:]
+    content = message.content
+    if content.startswith('!ask '):
+        provider = 'gemini-fast'
+        prompt = content[5:]
+    elif content.startswith('!gemini '):
+        provider = 'gemini-fast'
+        prompt = content[8:]
+    elif content.startswith('!draft '):
+        provider = 'gemini-pro'
+        prompt = content[7:]
+    elif content.startswith('!pro '):
+        provider = 'gemini-pro'
+        prompt = content[5:]
 
     if provider and prompt.strip():
         async with message.channel.typing():
-            # Run blocking API call in an executor so the bot loop stays responsive
             loop = asyncio.get_event_loop()
             reply = await loop.run_in_executor(None, query_llm, provider, prompt)
 
-            # Send response in safe chunks
             for chunk in chunk_message(reply):
                 await message.channel.send(chunk)
 
