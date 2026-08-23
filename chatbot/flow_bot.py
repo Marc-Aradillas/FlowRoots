@@ -33,6 +33,15 @@ def chunk_message(text: str, max_length: int = 1900):
         chunks.append(text)
     return chunks
 
+async def get_channel_context(channel, limit=15):
+    """Fetches the last N messages from the active channel/thread."""
+    messages = []
+    async for msg in channel.history(limit=limit, oldest_first=False):
+        if not msg.author.bot:
+            messages.append(f"{msg.author.display_name}: {msg.content}")
+    messages.reverse()
+    return "\n".join(messages)
+
 async def process_llm_prompt(channel_id, prompt: str, send_func, channel_obj=None, provider: str = "gemini-fast"):
     """Core logic to process prompts and maintain thread memory without response timeouts."""
     if channel_id not in conversation_memory:
@@ -114,6 +123,31 @@ async def draft_command(interaction: discord.Interaction, prompt: str):
         provider="gemini-pro"
     )
 
+@bot.tree.command(name="summarize", description="Summarize or revise recent messages in this channel")
+@app_commands.describe(instructions="Optional specific instructions for the summary or revision")
+async def summarize_command(interaction: discord.Interaction, instructions: str = "Summarize the recent discussions."):
+    await interaction.response.defer(thinking=True)
+    
+    # Fetch recent channel context (last 15 messages)
+    history_text = await get_channel_context(interaction.channel, limit=15)
+    
+    if not history_text:
+        await interaction.followup.send("No recent user messages found in this channel to analyze.")
+        return
+
+    full_prompt = (
+        f"Instructions: {instructions}\n\n"
+        f"Here is the recent message history from this channel:\n\n{history_text}"
+    )
+
+    await process_llm_prompt(
+        channel_id=interaction.channel_id,
+        prompt=full_prompt,
+        send_func=interaction.followup.send,
+        channel_obj=interaction.channel,
+        provider="gemini-fast"
+    )
+
 @bot.tree.command(name="clear", description="Reset conversation memory for this thread or channel")
 async def clear_command(interaction: discord.Interaction):
     channel_id = interaction.channel_id
@@ -126,6 +160,7 @@ async def flowhelp_command(interaction: discord.Interaction):
         "**🌊 FlowBot Slash Commands:**\n"
         "`/ask <prompt>` - Fast operational queries (Gemini 3.6 Flash)\n"
         "`/draft <prompt>` - Detailed proposals & copy (Gemini 3.6 Pro)\n"
+        "`/summarize [instructions]` - Read and summarize recent channel history\n"
         "`/clear` - Reset conversation memory for this thread\n"
         "`/flowhelp` - View available commands\n"
         "💡 *You can also @FlowBot directly in any channel or thread!*"
@@ -144,42 +179,3 @@ async def sync(ctx):
 
 if __name__ == '__main__':
     bot.run(TOKEN)
-
-
-
-
-#_____________________________________________________________________________________________________
-# INITIAL ITERATION OF FLOWBOT CODE
-#_____________________________________________________________________________________________________
-
-'''import os
-import discord
-from dotenv import load_dotenv
-from router import query_llm
-
-# Load secret environment variables from .env
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-
-# Configure Discord Intents
-intents = discord.Intents.default()
-intents.message_content = True  # Required to read channel text
-
-client = discord.Client(intents=intents)
-
-@client.event
-async def on_ready():
-    print(f'⚡ FlowBot successfully authenticated as {client.user}!')
-
-@client.event
-async def on_message(message):
-    # Ignore messages sent by FlowBot itself
-    if message.author == client.user:
-        return
-
-    # Basic connection test command
-    if message.content.startswith('!ping'):
-        await message.channel.send('FlowBot is live and connected! 🌊')
-
-if __name__ == '__main__':
-    client.run(TOKEN)'''
