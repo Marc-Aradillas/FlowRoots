@@ -1,4 +1,6 @@
 import os
+import time
+from pathlib import Path
 from dotenv import load_dotenv
 from google import genai
 # import anthropic  # Re-enable when ready to fund API
@@ -11,37 +13,60 @@ load_dotenv()
 # claude_client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 # openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+# Dynamically load KNOWLEDGE_BASE.md if present
+BASE_DIR = Path(__file__).resolve().parent
+KNOWLEDGE_FILE = BASE_DIR / "KNOWLEDGE_BASE.md"
+
+knowledge_content = ""
+if KNOWLEDGE_FILE.exists():
+    with open(KNOWLEDGE_FILE, "r", encoding="utf-8") as f:
+        knowledge_content = f.read()
+
 FLOWROOTS_CONTEXT = (
     "You are FlowBot, the operational AI assistant for Flowroots, a dance crew and arts platform. "
-    "Flowroots offers youth/teen workshops ($20 drop-in, $60 pass) and monthly intensives ($65/mo) "
-    "covering Popping, Animation, Waving, and Memphis Jookin. Help the team with proposals, "
-    "event logistics, and code tasks clearly and concisely."
+    "You are sharp, edgy, and love participating in playful banter and roasts with the crew. "
+    "When the team roasts someone or throws banter about dance skills, operational mistakes, or crew habits, "
+    "JUMP IN and roast them back twice as hard.\n\n"
+    "CREW ROASTING GUIDELINES:\n"
+    "- Target the work, dance moves, code, tardiness, or crew dynamics.\n"
+    "- Match their sarcastic energy—don't be a boring corporate robot.\n"
+    "- Always answer the actual question after delivering the roast.\n\n"
+    f"--- FLOWROOTS KNOWLEDGE BASE ---\n{knowledge_content}"
 )
 
-def query_llm(provider: str, prompt: str) -> str:
-    """Routes prompts to the designated AI model."""
+def query_llm(provider: str, chat_history: list) -> str:
+    """Routes prompt and conversation history with automatic retries on 503 errors."""
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         return "⚠️ Error: `GEMINI_API_KEY` is not set in your .env file."
 
-    full_prompt = f"{FLOWROOTS_CONTEXT}\n\nUser Request: {prompt}"
-
     try:
         gemini_client = genai.Client(api_key=api_key)
 
-        # Standard Gemini API models
-        if provider in ["gemini-fast", "gemini", "ask"]:
-            model_name = "gemini-3.6-flash"
-        elif provider in ["gemini-pro", "draft", "pro"]:
-            model_name = "gemini-3.6-pro"
-        else:
-            return f"⚠️ Unknown model provider requested: {provider}"
-
-        response = gemini_client.models.generate_content(
-            model=model_name,
-            contents=full_prompt
+        models_to_try = (
+            ["gemini-3.6-flash", "gemini-3.6-pro"]
+            if provider in ["gemini-fast", "gemini", "ask"]
+            else ["gemini-3.6-pro"]
         )
-        return response.text if response.text else "⚠️ Empty response returned."
+
+        formatted_contents = [{"role": "user", "parts": [{"text": f"System Context: {FLOWROOTS_CONTEXT}"}]}]
+        formatted_contents.extend(chat_history)
+
+        for model_name in models_to_try:
+            for attempt in range(3):
+                try:
+                    response = gemini_client.models.generate_content(
+                        model=model_name,
+                        contents=formatted_contents
+                    )
+                    if response.text:
+                        return response.text
+                except Exception as e:
+                    error_msg = str(e)
+                    if "503" in error_msg or "UNAVAILABLE" in error_msg:
+                        time.sleep(2 * (attempt + 1))
+                        continue
+                    break
 
         # --- FUTURE PAID PROVIDER ROUTES ---
         # elif provider == "claude":
@@ -62,6 +87,8 @@ def query_llm(provider: str, prompt: str) -> str:
         #         ]
         #     )
         #     return response.choices[0].message.content
+
+        return "⚠️ Google API servers are currently experiencing high demand. Please try again in a few moments."
 
     except Exception as e:
         return f"⚠️ Execution Error ({provider}): {str(e)}"
