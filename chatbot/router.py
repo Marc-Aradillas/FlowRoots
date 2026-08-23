@@ -18,30 +18,30 @@ FLOWROOTS_CONTEXT = (
     "event logistics, and code tasks clearly and concisely."
 )
 
-async def query_llm(provider: str, prompt: str) -> str:
+def query_llm(provider: str, prompt: str) -> str:
     """Routes prompts to the designated AI model."""
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
-        return "Error: GEMINI_API_KEY is not set in your .env file."
+        return "⚠️ Error: `GEMINI_API_KEY` is not set in your .env file."
 
-    # Initialize Gemini client dynamically
-    gemini_client = genai.Client(api_key=api_key)
     full_prompt = f"{FLOWROOTS_CONTEXT}\n\nUser Request: {prompt}"
 
     try:
-        if provider in ["gemini-fast", "gemini", "ask"]:
-            response = gemini_client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=full_prompt
-            )
-            return response.text
+        gemini_client = genai.Client(api_key=api_key)
 
+        # Standard Gemini API models
+        if provider in ["gemini-fast", "gemini", "ask"]:
+            model_name = "gemini-3.6-flash"
         elif provider in ["gemini-pro", "draft", "pro"]:
-            response = gemini_client.models.generate_content(
-                model="gemini-2.5-pro",
-                contents=full_prompt
-            )
-            return response.text
+            model_name = "gemini-3.6-pro"
+        else:
+            return f"⚠️ Unknown model provider requested: {provider}"
+
+        response = gemini_client.models.generate_content(
+            model=model_name,
+            contents=full_prompt
+        )
+        return response.text if response.text else "⚠️ Empty response returned."
 
         # --- FUTURE PAID PROVIDER ROUTES ---
         # elif provider == "claude":
@@ -63,12 +63,8 @@ async def query_llm(provider: str, prompt: str) -> str:
         #     )
         #     return response.choices[0].message.content
 
-        else:
-            return f"Unknown model provider requested: {provider}"
-
     except Exception as e:
-        return f"Error executing {provider} query: {str(e)}"
-
+        return f"⚠️ Execution Error ({provider}): {str(e)}"
 
 
 
