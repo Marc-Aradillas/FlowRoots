@@ -41,8 +41,8 @@ async def on_message(message):
     if message.content.strip() in ['!help', '!flowbot']:
         help_text = (
             "**🌊 FlowBot Commands:**\n"
-            "`!ask <prompt>` or `!gemini <prompt>` - Fast operational queries (Gemini 2.5 Flash)\n"
-            "`!draft <prompt>` or `!pro <prompt>` - Detailed proposals & copy (Gemini 2.5 Pro)\n"
+            "`!ask <prompt>` or `!gemini <prompt>` - Fast operational queries (Gemini 3.6 Flash)\n"
+            "`!draft <prompt>` or `!pro <prompt>` - Detailed proposals & copy (Gemini 3.6. Pro)\n"
             "`!ping` - Check bot connection"
         )
         await message.channel.send(help_text)
