@@ -33,8 +33,8 @@ def chunk_message(text: str, max_length: int = 1900):
         chunks.append(text)
     return chunks
 
-async def process_llm_prompt(channel_id, prompt: str, send_func, typing_func, provider: str = "gemini-fast"):
-    """Core logic to process prompts and maintain thread memory."""
+async def process_llm_prompt(channel_id, prompt: str, send_func, channel_obj=None, provider: str = "gemini-fast"):
+    """Core logic to process prompts and maintain thread memory without response timeouts."""
     if channel_id not in conversation_memory:
         conversation_memory[channel_id] = []
 
@@ -44,16 +44,22 @@ async def process_llm_prompt(channel_id, prompt: str, send_func, typing_func, pr
     if len(conversation_memory[channel_id]) > 10:
         conversation_memory[channel_id] = conversation_memory[channel_id][-10:]
 
-    async with typing_func():
-        loop = asyncio.get_event_loop()
-        reply = await loop.run_in_executor(
-            None, query_llm, provider, conversation_memory[channel_id]
-        )
+    loop = asyncio.get_event_loop()
+    reply = await loop.run_in_executor(
+        None, query_llm, provider, conversation_memory[channel_id]
+    )
 
-        conversation_memory[channel_id].append({"role": "model", "parts": [{"text": reply}]})
+    conversation_memory[channel_id].append({"role": "model", "parts": [{"text": reply}]})
 
-        for chunk in chunk_message(reply):
-            await send_func(chunk)
+    chunks = chunk_message(reply)
+    if chunks:
+        # Send first chunk via interaction followup or channel send
+        await send_func(chunks[0])
+        
+        # Send additional chunks to channel directly if response exceeds 1900 chars
+        if len(chunks) > 1 and channel_obj:
+            for chunk in chunks[1:]:
+                await channel_obj.send(chunk)
 
 @bot.event
 async def on_ready():
@@ -66,17 +72,17 @@ async def on_message(message):
 
     # Check if the bot was tagged directly
     if bot.user.mentioned_in(message):
-        # Strip out the mention tag (e.g. <@123456789>)
         clean_prompt = message.content.replace(f'<@{bot.user.id}>', '').replace(f'<@!{bot.user.id}>', '').strip()
         
         if clean_prompt:
-            await process_llm_prompt(
-                channel_id=message.channel.id,
-                prompt=clean_prompt,
-                send_func=message.channel.send,
-                typing_func=message.channel.typing,
-                provider="gemini-fast"
-            )
+            async with message.channel.typing():
+                await process_llm_prompt(
+                    channel_id=message.channel.id,
+                    prompt=clean_prompt,
+                    send_func=message.channel.send,
+                    channel_obj=message.channel,
+                    provider="gemini-fast"
+                )
             return
 
     # Process standard prefix commands (like !sync)
@@ -92,7 +98,7 @@ async def ask_command(interaction: discord.Interaction, prompt: str):
         channel_id=interaction.channel_id,
         prompt=prompt,
         send_func=interaction.followup.send,
-        typing_func=interaction.channel.typing,
+        channel_obj=interaction.channel,
         provider="gemini-fast"
     )
 
@@ -104,7 +110,7 @@ async def draft_command(interaction: discord.Interaction, prompt: str):
         channel_id=interaction.channel_id,
         prompt=prompt,
         send_func=interaction.followup.send,
-        typing_func=interaction.channel.typing,
+        channel_obj=interaction.channel,
         provider="gemini-pro"
     )
 
