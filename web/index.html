@@ -4,11 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="FLOWROOTS_LETTERS.png">
-  <title>Uplifting Dallas Popping</title>
-
+  <title>Rooted In Flow | Uplifting Dallas Popping</title>
 
   <!-- Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -23,6 +22,7 @@
 
       <nav class="main-nav" id="mainNav">
         <a href="#about">About</a>
+        <a href="#styles">Styles</a>
         <a href="#workshops">Workshops</a>
         <a href="#team">Meet the Team</a>
         <a href="#contact">Contact</a>
@@ -32,34 +32,32 @@
 
   <main>
     <!-- HERO -->
-  <section id="home" class="hero">
-    <div class="hero-inner">
-      <img src="FLOWROOTS_LETTERS.png" alt="Flow Roots Logo" class="hero-logo">
-      <p class="hero-sub">Uplifting the Dallas Popping Community</p>
-      <p class="hero-cta">
-        <a href="#workshops" class="btn">View Workshops</a>
-        <a href="#contact" class="btn btn-ghost">Contact Us</a>
-      </p>
-    </div>
-  </section>
+    <section id="home" class="hero">
+      <div class="hero-inner">
+        <img src="FLOWROOTS_LETTERS.png" alt="Flow Roots Logo" class="hero-logo">
+        <p class="hero-sub">Uplifting the Dallas Popping Community</p>
+        <p class="hero-cta">
+          <a href="#workshops" class="btn">View Workshops</a>
+          <a href="#contact" class="btn btn-ghost">Contact Us</a>
+        </p>
+      </div>
+    </section>
 
-  <!--
-<section class="widget-container">
-  <div class="instagram-wrapper">
-    <script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script>
-    <iframe src="//lightwidget.com/widgets/2868cf7356ec57079b9b82faac370e54.html" 
-            scrolling="no" 
-            allowtransparency="true" 
-            class="lightwidget-widget" 
-            style="width:200%; border:0; overflow:hidden;">
-    </iframe>
-  </div>
-</section>-->
+    <!-- INSTAGRAM FEED (BEHOLD WIDGET) -->
+    <section id="social-feed" class="container section text-center">
+      <h2 class="section-title">Latest From Instagram</h2>
+      <p class="lead" style="margin-bottom: 2rem;">Follow us <a href="https://instagram.com/flowrootsdallas" target="_blank" rel="noopener">@flowrootsdallas</a> for session clips and announcements.</p>
 
-<!-- LightWidget WIDGET --><script src="https://cdn.lightwidget.com/widgets/lightwidget.js"></script><iframe src="//lightwidget.com/widgets/2868cf7356ec57079b9b82faac370e54.html" scrolling="no" allowtransparency="true" class="lightwidget-widget" style="width:100%;border:0;overflow:hidden;"></iframe>
-
-  <section id="about" class="container section reveal">
-
+      <!-- Behold Instagram Feed Widget -->
+      <behold-widget feed-id="o2I7GuXiigWjEhO3Sw5y"></behold-widget>
+      <script>
+        (() => {
+          if(window.__bhldScript)return;window.__bhldScript=true;
+          const d=document,s=d.createElement("script");s.type="module";
+          s.src="https://w.behold.so/widget.js";setTimeout(()=>{d.head.append(s);},0);
+        })();
+      </script>
+    </section>
 
     <!-- ABOUT -->
     <section id="about" class="container section reveal">
@@ -67,39 +65,63 @@
       <p class="lead">Established in September 2024, Flow Roots is a Dallas-based organization created with the intention of uplifting the Dallas Popping community. Inspired by the legacy of John Doe, we aim to bring the same level of inspiration to dancers and enthusiasts alike.</p>
     </section>
 
+    <!-- CORE STYLES & HISTORY -->
+    <section id="styles" class="container section reveal">
+      <h2 class="section-title">Core Styles & Foundations</h2>
+      <p class="lead">We preserve and cultivate street dance foundational knowledge through dedicated instruction:</p>
+      
+      <div class="cards-grid">
+        <article class="card">
+          <h3>Popping</h3>
+          <p>Muscular contractions (pops/hits) timed to music beats, focusing on control, rhythm, and isolation.</p>
+        </article>
+        <article class="card">
+          <h3>Waving</h3>
+          <p>Fluid, continuous energy transfer mimicking fluid dynamics and wave motion across body joints.</p>
+        </article>
+        <article class="card">
+          <h3>Tutting</h3>
+          <p>Geometric body angles and 90-degree wrist and arm positioning inspired by ancient Egyptian art forms.</p>
+        </article>
+        <article class="card">
+          <h3>Animation & Gliding</h3>
+          <p>Illusionist movement styles incorporating stop-motion mechanics, frame-rate control, and floating footwork.</p>
+        </article>
+      </div>
+    </section>
+
     <!-- WORKSHOPS -->
     <section id="workshops" class="container section reveal">
-      <h2 class="section-title">Workshops</h2>
-      <p>Kick off the new year with our ✨ EXCITING ✨ workshops, featuring four classes:</p>
+      <h2 class="section-title">Workshops & Intensives</h2>
+      <p>Kick off the new year with our featured classes:</p>
 
       <div id="events-list" class="cards-grid">
-        <!-- Events will be loaded here dynamically -->
+        <!-- Events will be loaded here dynamically via /api/events -->
       </div>
-    
+
       <div class="cards-grid">
         <article class="card">
           <h3>Popping</h3>
           <p>Master the foundations and originality with <strong>@shadowz.14</strong>.</p>
         </article>
-
         <article class="card">
           <h3>Waving</h3>
           <p>Learn the art of being like water 🌊 with <strong>@artofzenith</strong>.</p>
         </article>
-
         <article class="card">
           <h3>Tutting</h3>
           <p>Explore lines and angles with <strong>@txwonder214</strong>.</p>
         </article>
-
         <article class="card">
           <h3>Animation</h3>
           <p>Discover character play and technique with <strong>@rift_1</strong>.</p>
         </article>
+      </div>
       
       <div class="pricing">
-        <p><strong>Early-bird:</strong> $15/class or $50 for all 4 (until Jan. 1)</p>
-        <p><strong>General:</strong> $20/class or $65 for all 4</p>
+        <p><strong>Youth & Teen Drop-In:</strong> $20 / class</p>
+        <p><strong>Workshop Pass:</strong> $60 / 4-class pass</p>
+        <p><strong>Monthly Intensives:</strong> $65 / month</p>
       </div>
     </section>
 
@@ -112,61 +134,55 @@
           <div class="avatar" aria-hidden="true"></div>
           <figcaption>
             <h4>Shadowz</h4>
-            <p>Popping Teacher: A master of foundation and originality in Dallas Popping.</p>
+            <p>Popping Teacher: Master of foundation and originality in Dallas Popping.</p>
           </figcaption>
         </figure>
-
         <figure class="team-card">
           <div class="avatar" aria-hidden="true"></div>
           <figcaption>
             <h4>Mic</h4>
-            <p>Waving Teacher: A wizard in the waving community, upholding the essence of movement.</p>
+            <p>Waving Teacher: Audio wizard and fluid movement specialist.</p>
           </figcaption>
         </figure>
-
         <figure class="team-card">
           <div class="avatar" aria-hidden="true"></div>
           <figcaption>
             <h4>Wonder</h4>
-            <p>Tutting Teacher: Known for breaking down angles and levels in creative ways.</p>
+            <p>Tutting Teacher: Technical instructor breaking down complex angular concepts.</p>
           </figcaption>
         </figure>
-
         <figure class="team-card">
           <div class="avatar" aria-hidden="true"></div>
           <figcaption>
             <h4>Rift</h4>
-            <p>Animation Teacher: Demonstrates mind-body visualization and immaculate technique.</p>
+            <p>Animation Teacher: Mind-body visualization and precision technique expert.</p>
           </figcaption>
         </figure>
-
         <figure class="team-card">
           <div class="avatar" aria-hidden="true"></div>
           <figcaption>
             <h4>MJG</h4>
-            <p>Filmmaker/Visual Creator: Captures magic behind the lens, enhancing the experience.</p>
+            <p>Filmmaker / Visual Creator: Capturing crew culture behind the lens.</p>
           </figcaption>
         </figure>
       </div>
     </section>
 
-
-    
-    <!-- CONTACT -->
+    <!-- CONTACT & REGISTRATION -->
     <section id="contact" class="container section reveal">
-      <h2 class="section-title">Contact Us</h2>
-      <p>Register for workshops via DM on Instagram <strong>@flowrootsdallas</strong>. Payments accepted through Venmo, Zelle, etc.</p>
+      <h2 class="section-title">Contact & Registration</h2>
+      <p>Register for workshops via DM on Instagram <strong>@flowrootsdallas</strong> or reach out directly for crew bookings.</p>
 
       <div class="contact-row">
         <a class="social-link" href="https://instagram.com/flowrootsdallas" target="_blank" rel="noopener">Instagram</a>
-        <a class="social-link" href="#" rel="noopener">Venmo</a>
+        <a class="social-link" href="mailto:flowroots214@gmail.com">Email Us</a>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="container">
-      <p>© 2024 Flow Roots. All Rights Reserved.</p>
+      <p>© 2026 Flow Roots. All Rights Reserved.</p>
     </div>
   </footer>
 
