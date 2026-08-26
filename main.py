@@ -1,6 +1,6 @@
 import os
 import json
-from flask import Flask, render_template, send_from_directory, jsonify
+from flask import Flask, render_template, send_from_directory, jsonify, request
 
 # Create Flask app and set static/template folders
 app = Flask(__name__, static_folder='web', template_folder='web')
@@ -28,10 +28,20 @@ def get_events():
 def assets(filename):
     return send_from_directory('assets', filename)
 
-# Catch-all for static web files (index.html, JS, CSS)
-@app.route('/<path:filename>')
+# # Catch-all for static web files (index.html, JS, CSS)
+# @app.route('/<path:filename>')
+# def static_files(filename):
+#     return send_from_directory(app.static_folder, filename)
+
+# Explicitly serve JS, CSS, and root images without catching HTML requests
+@app.route('/<filename>.css')
+@app.route('/<filename>.js')
+@app.route('/<filename>.png')
+@app.route('/<filename>.jpg')
 def static_files(filename):
-    return send_from_directory(app.static_folder, filename)
+    # Extracts extension dynamically
+    ext = request.path.split('.')[-1]
+    return send_from_directory(app.static_folder, f"{filename}.{ext}")
 
 # --- Web Server Entry Point ---
 if __name__ == "__main__":

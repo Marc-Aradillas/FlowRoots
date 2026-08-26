@@ -33,10 +33,11 @@ body {
 .site-header {
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 10000;
   backdrop-filter: blur(12px);
-  background: rgba(7, 7, 9, 0.75);
+  background: rgba(7, 7, 9, 0.95);
   border-bottom: 1px solid var(--border);
+  overflow: visible !important;
 }
 .header-inner {
   max-width: var(--maxw);
@@ -45,23 +46,25 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 14px 20px;
+  position: relative;
 }
 .brand {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
   text-decoration: none;
   color: var(--text);
 }
-.brand-logo { height: 48px; width: auto; }
+.brand-logo { height: 36px; width: auto; display: block; }
 .brand-text {
   font-family: var(--ff-display);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.8px;
   font-size: 1.1rem;
   background: linear-gradient(135deg, #fff, var(--muted));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  white-space: nowrap;
 }
 
 .main-nav { display: flex; gap: 8px; }
@@ -79,7 +82,16 @@ body {
   box-shadow: 0 0 12px var(--glow);
 }
 
-.nav-toggle { display: none; background: none; border: 0; font-size: 22px; color: white; }
+.nav-toggle { 
+  display: none; 
+  background: none; 
+  border: 0; 
+  font-size: 24px; 
+  color: white; 
+  cursor: pointer;
+  padding: 4px 8px;
+  z-index: 10001;
+}
 
 /* Dynamic Hero Section */
 .hero {
@@ -221,12 +233,30 @@ body {
   transition: all 0.3s ease;
 }
 .team-card .avatar {
+  position: relative;
+  overflow: hidden;
   width: 72px;
   height: 72px;
   border-radius: 12px;
   background: linear-gradient(135deg, var(--accent1), var(--accent2));
   flex-shrink: 0;
   box-shadow: 0 6px 16px var(--glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.team-card .avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.team-card .avatar svg {
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  color: rgba(255, 255, 255, 0.7);
 }
 .team-card h4 { margin: 0 0 4px; font-size: 1.05rem; color: #fff; font-family: var(--ff-display); }
 .team-card p { margin: 0; font-size: 0.88rem; color: var(--muted); }
@@ -255,9 +285,40 @@ body {
   .cards-grid { grid-template-columns: repeat(2, 1fr); }
   .team-grid { grid-template-columns: repeat(2, 1fr); }
 }
-@media (max-width: 640px) {
-  .main-nav { display: none; }
+
+@media (max-width: 768px) {
   .nav-toggle { display: block; }
+  
+  /* Mobile Overlay Menu Drawer */
+  .main-nav {
+    display: none;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 64px);
+    background: #070709;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 40px;
+    gap: 20px;
+    z-index: 9999;
+    border-top: 1px solid var(--border);
+  }
+
+  .main-nav.active,
+  .main-nav.open {
+    display: flex !important;
+  }
+
+  .main-nav a {
+    font-size: 1.2rem;
+    width: 80%;
+    text-align: center;
+    padding: 12px;
+  }
+
   .cards-grid, .team-grid { grid-template-columns: 1fr; }
   .hero-logo { width: 70%; }
 }

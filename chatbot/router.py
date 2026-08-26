@@ -49,7 +49,7 @@ FLOWROOTS_CONTEXT = (
 # )
 
 def query_llm(provider: str, chat_history: list) -> str:
-    """Routes prompt and conversation history with automatic retries on 503 errors."""
+    """Routes prompt and conversation history with automatic retries on 429/503 errors and fallback models."""
     api_key = os.getenv("GEMINI_API_KEY")
     if not api_key:
         return "⚠️ Error: `GEMINI_API_KEY` is not set in your .env file."
@@ -73,13 +73,16 @@ def query_llm(provider: str, chat_history: list) -> str:
                         model=model_name,
                         contents=formatted_contents
                     )
-                    if response.text:
+                    if response and response.text:
                         return response.text
                 except Exception as e:
-                    error_msg = str(e)
-                    if "503" in error_msg or "UNAVAILABLE" in error_msg:
-                        time.sleep(2 * (attempt + 1))
+                    error_msg = str(e).upper()
+                    # Catch rate limits (429/RESOURCE_EXHUASTED) and server load (503/UNAVAILABLE)
+                    if any(err in error_msg for err in ["429", "RESOURCE_EXHAUSTED", "QUOTA", "503", "UNAVAILABLE"]):
+                        # Exponential backoff: 2s, 4s, 8s
+                        time.sleep(2 * (2 **attempt))
                         continue
+                    # Break out of loop to try fallback model for non-recoverable errors
                     break
 
         # --- FUTURE PAID PROVIDER ROUTES ---
