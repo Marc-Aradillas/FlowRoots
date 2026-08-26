@@ -58,7 +58,11 @@ async def process_llm_prompt(channel_id, prompt: str, send_func, channel_obj=Non
         None, query_llm, provider, conversation_memory[channel_id]
     )
 
-    conversation_memory[channel_id].append({"role": "model", "parts": [{"text": reply}]})
+    # Check if an error occurred; if so, pop user message to keep memory clean
+    if reply.startswith("⚠️"):
+        conversation_memory[channel_id].pop()
+    else:
+        conversation_memory[channel_id].append({"role": "model", "parts": [{"text": reply}]})
 
     chunks = chunk_message(reply)
     if chunks:
@@ -99,7 +103,7 @@ async def on_message(message):
 
 # --- Slash Commands ---
 
-@bot.tree.command(name="ask", description="Fast operational queries via Gemini 3.6 Flash")
+@bot.tree.command(name="ask", description="Fast operational queries via Gemini Flash")
 @app_commands.describe(prompt="What would you like to ask FlowBot?")
 async def ask_command(interaction: discord.Interaction, prompt: str):
     await interaction.response.defer(thinking=True)
@@ -111,7 +115,7 @@ async def ask_command(interaction: discord.Interaction, prompt: str):
         provider="gemini-fast"
     )
 
-@bot.tree.command(name="draft", description="Detailed proposals, copy, and grant writing via Gemini 3.6 Pro")
+@bot.tree.command(name="draft", description="Detailed proposals, copy, and grant writing via Gemini Pro")
 @app_commands.describe(prompt="What content or proposal do you want FlowBot to draft?")
 async def draft_command(interaction: discord.Interaction, prompt: str):
     await interaction.response.defer(thinking=True)
@@ -158,8 +162,8 @@ async def clear_command(interaction: discord.Interaction):
 async def flowhelp_command(interaction: discord.Interaction):
     help_text = (
         "**🌊 FlowBot Slash Commands:**\n"
-        "`/ask <prompt>` - Fast operational queries (Gemini 3.6 Flash)\n"
-        "`/draft <prompt>` - Detailed proposals & copy (Gemini 3.6 Pro)\n"
+        "`/ask <prompt>` - Fast operational queries (Gemini Flash)\n"
+        "`/draft <prompt>` - Detailed proposals & copy (Gemini Pro)\n"
         "`/summarize [instructions]` - Read and summarize recent channel history\n"
         "`/clear` - Reset conversation memory for this thread\n"
         "`/flowhelp` - View available commands\n"
