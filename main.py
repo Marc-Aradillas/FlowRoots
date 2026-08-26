@@ -17,21 +17,17 @@ def get_events():
     data_path = os.path.join(base_path, 'data', 'events.json')
     
     try:
-        with open(data_path, 'r') as f:
+        with open(data_path, 'r', encoding='utf-8') as f:
             events = json.load(f)
         return jsonify(events)
-    except FileNotFoundError:
-        return jsonify({"error": "Events file not found"}), 404
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Return empty list with 200 status code so frontend loads cleanly
+        return jsonify([]), 200
 
 # Serve assets dynamically
 @app.route('/assets/<path:filename>')
 def assets(filename):
     return send_from_directory('assets', filename)
-
-# # Catch-all for static web files (index.html, JS, CSS)
-# @app.route('/<path:filename>')
-# def static_files(filename):
-#     return send_from_directory(app.static_folder, filename)
 
 # Explicitly serve JS, CSS, and root images without catching HTML requests
 @app.route('/<filename>.css')
